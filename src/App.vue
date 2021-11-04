@@ -11,6 +11,10 @@
     </div>
 
     <div id="konva-stage"></div>
+
+    <div class="form-group">
+      <button>Salvar imagem</button>
+    </div>
   </div>
 </template>
 
@@ -25,16 +29,31 @@ export default {
       image_url: null,
       stage: null,
       layer: null,
+      layer_novo: null,
     }
   },
   methods: {
     imagemAdicionada(){
       let stage = this.stage;
       stage.on('click', function(){
-        var mousePos = stage.getPointerPosition();
-        console.log(mousePos);
+        let posicaoMouse = stage.getPointerPosition();
+        console.log(posicaoMouse);
+
+        let layer = new Konva.Layer();
+        let circle = new Konva.Circle({
+          x: posicaoMouse.x,
+          y: posicaoMouse.y,
+          radius: 10,
+          fill: 'red',
+          stroke: 'black',
+          strokeWidth: 4,
+        });
+
+        layer.add(circle);
+        stage.add(layer);
+        console.log(stage);
+        // this.stage.add(this.layer_novo);
       })
-      
     },
     adicionarImagemNoLayer(imagem_objeto){
       let imagem = new Konva.Image({
