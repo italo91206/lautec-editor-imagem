@@ -30,6 +30,7 @@ export default {
       stage: null,
       layer: null,
       layer_novo: null,
+      imagem: null,
     }
   },
   methods: {
@@ -38,9 +39,10 @@ export default {
       let link = document.createElement('a');
       link.download = 'imagem.jpeg';
       link.href = data_url;
+      this.imagem = data_url;
       document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // link.click();
+      // document.body.removeChild(link);
     },
     imagemAdicionada(){
       let stage = this.stage;
