@@ -13,7 +13,7 @@
     <div id="konva-stage"></div>
 
     <div class="form-group">
-      <button>Salvar imagem</button>
+      <button @click="salvarImagem">Salvar imagem</button>
     </div>
   </div>
 </template>
@@ -33,9 +33,20 @@ export default {
     }
   },
   methods: {
+    salvarImagem(){
+      let data_url = this.stage.toDataURL({ pixelRatio: 3 });
+      let link = document.createElement('a');
+      link.download = 'imagem.jpeg';
+      link.href = data_url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
     imagemAdicionada(){
       let stage = this.stage;
-      stage.on('click', function(){
+      let evento = window.innerWidth < 768 ? 'tap': 'click';
+      console.log(evento);
+      stage.on(evento, function(){
         let posicaoMouse = stage.getPointerPosition();
         console.log(posicaoMouse);
 
