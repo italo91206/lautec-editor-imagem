@@ -2,21 +2,29 @@
   <div id="app">
     <div class="container">
       <div class="form-group">
-        <button @input="capturarImagem" class="flex">
+        <button @click="capturarImagem" class="flex">
           <i class="fas fa-camera"></i>
           Capturar imagem
         </button>
 
-        <input id="capturar-imagem" @input="imagemInput" type="file" accept="image/*" capture style="opacity: hidden;">
+        <input id="capturar-imagem" 
+          class="hidden"
+          @input="imagemInput" type="file" 
+          accept="image/*" capture
+        >
       </div>
 
       <div class="form-group">
-        <button @input="abrirGaleria" class="flex">
+        <button @click="abrirGaleria" class="flex">
           <i class="far fa-image"></i>
           Abrir galeria
         </button>
 
-        <input id="abrir-galeria" @input="imagemInput" type="file" accept="image/*" style="display: none;">
+        <input id="abrir-galeria" 
+          class="hidden"
+          @input="imagemInput" type="file" 
+          accept="image/*" style="display: none;"
+        >
       </div>
 
       <div class="form-group row">
@@ -70,6 +78,7 @@ export default {
       numero_iteracoes: 0,
       iteracao_atual: 0,
       iteracoes: [],
+      retirado: [],
     }
   },
   methods: {
@@ -138,12 +147,15 @@ export default {
 
       let evento = window.innerWidth < 768 ? 'tap': 'click';
 
-      this.layer = new Konva.Layer();
-      this.layer.add(imagem);
-      this.stage.add(this.layer);
+      let layer = new Konva.Layer();
+      layer.add(imagem);
+      this.layer = layer;
+      this.stage.add(layer);
       this.stage.on(evento, () => { this.addEventoClick(); })
     },
     imagemInput(e){
+      this.montarStage();
+      
       let imagem_input = e.target.files[0];
       this.image_url = URL.createObjectURL(imagem_input);
       
@@ -152,27 +164,36 @@ export default {
       imagem_objeto.onload = this.adicionarImagemNoLayer(imagem_objeto);
     },
     undo(){
-      // if(this.iteracao_atual > 0)
-      //   this.iteracao_atual--;
-      // this.iteracoes = this.iteracoes.filter(iteracao =>{return iteracao != this.iteracao_atual});
-      console.log(`Let's undo it!`);
+      let layer = { ...this.layer };
+      // let stage = { ...this.stage };
+      
+      let remover = layer.children.pop();
+      this.retirado.push(remover);
+
+      this.stage.draw();
+
+      // console.log(layer.children);
     },
     redo(){
-      // if(this.iteracao_atual > 0)
-      //   this.iteracao_atual++;
-      // this.iteracoes = this.iteracoes.filter(iteracao =>{return iteracao != this.iteracao_atual});
-      console.log('Lets re-do it !');
+      let layer = { ...this.layer };
+
+      let adicionar = this.retirado.pop();
+      layer.children.push(adicionar);
+
+      this.stage.draw();
     },
     montarStage(){
       let container = document.querySelector('.container')
       var width = container.clientWidth - 30;
       var height = 500;
 
-      this.stage = new Konva.Stage({
+      let stage = new Konva.Stage({
         container: 'konva-stage',
         width: width,
         height: height,
       });
+
+      this.stage = stage;
     },
     abrirGaleria(){
       let el = document.querySelector('#abrir-galeria');
@@ -201,6 +222,11 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .col-9 {
