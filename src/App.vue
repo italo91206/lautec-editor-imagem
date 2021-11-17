@@ -7,23 +7,23 @@
           Capturar imagem
         </button>
 
-        <input id="capturar-imagem" 
-          class="hidden"
-          @input="imagemInput" type="file" 
-          accept="image/*" capture
-        >
-      </div>
-
-      <div class="form-group">
         <button @click="abrirGaleria" class="flex">
           <i class="far fa-image"></i>
           Abrir galeria
         </button>
+      </div>
 
+      <div class="form-group">
         <input id="abrir-galeria" 
           class="hidden"
           @input="imagemInput" type="file" 
           accept="image/*" style="display: none;"
+        >
+
+        <input id="capturar-imagem" 
+          class="hidden"
+          @input="imagemInput" type="file" 
+          accept="image/*" capture
         >
       </div>
 
@@ -39,15 +39,39 @@
         </button>
       </div>
 
-      <div class="row">
-        <div class="col-9">
+      <div id="image-editor">
+        <div class="col-9 konva-wrapper">
           <div id="konva-stage"></div>
         </div>
-        <div class="col-3 etapas-list">
-          <p v-for="iteracao in iteracoes" :key="iteracao.key" class="etapa">
-            {{iteracao.titulo}}<br/>
-            {{iteracao.classe}}
-          </p>
+
+        <div class="specific-options-bar--wrapper">
+          <div v-if="opcao == 'adicionar-icone'" class="specific-options-bar--adicionar-icone">
+            <button>adicionar icone</button>
+          </div>
+
+          <div v-else-if="opcao == 'adicionar-texto'" class="specific-options-bar--adicionar-texto">
+            <button>adicionar texto</button>
+          </div>
+
+          <div v-else-if="opcao == 'cortar-imagem'" class="specific-options-bar--cortar-imagem">
+            <button>cortar imagem</button>
+          </div>
+
+          <div v-else-if="opcao == 'redimensionar-imagem'" class="specific-options-bar--cortar-imagem">
+            <button>redimensionar imagem</button>
+          </div>
+
+          <div v-else-if="opcao == 'ajuste-de-brilho'" class="specific-options-bar--ajuste-de-brilho">
+            <button>teste</button>
+          </div>
+        </div>
+
+        <div class="col-3 options-bar">
+          <button @click="opcao = 'adicionar-icone'">Adicionar ícone</button>
+          <button @click="opcao = 'adicionar-texto'">Adicionar texto</button>
+          <button @click="opcao = 'cortar-imagem'">Cortar Imagem</button>
+          <button @click="opcao = 'redimensionar-imagem'">Redimensionar imagem</button>
+          <button @click="opcao = 'ajuste-de-brilho'">Ajuste de brilho</button>
         </div>
       </div>
 
@@ -79,6 +103,8 @@ export default {
       iteracao_atual: 0,
       iteracoes: [],
       retirado: [],
+      proximo_clique: '',
+      opcao: '',
     }
   },
   methods: {
@@ -112,8 +138,6 @@ export default {
       link.href = data_url;
       this.imagem = data_url;
       document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
     },
     addEventoClick(){
       let stage = this.stage;
@@ -224,6 +248,11 @@ export default {
     justify-content: space-between;
 }
 
+.col-9.konva-wrapper{
+  width: 425px;
+  height: 500px;
+}
+
 .hidden {
   opacity: 0;
   visibility: hidden;
@@ -241,6 +270,11 @@ export default {
 .etapas-list {
     max-height: 500px;
     overflow: auto;
+}
+
+.options-bar {
+    display: flex;
+    flex: 1;
 }
 
 .etapa {
