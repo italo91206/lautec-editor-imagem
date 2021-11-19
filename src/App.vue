@@ -203,11 +203,11 @@ export default {
       layer.add(imagem);
       this.layer = layer;
       this.stage.add(layer);
-      //if(this.opcao != '')
-        this.stage.on(evento, () => { 
-          let string = this.opcao;  
-          this.addEventoClick(string) 
-        });
+      
+      this.stage.on(evento, () => { 
+        if(this.opcao != '')  
+          this.addEventoClick(this.opcao) 
+      });
     },
     imagemInput(e){
       this.montarStage();
