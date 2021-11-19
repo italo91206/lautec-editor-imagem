@@ -46,11 +46,17 @@
 
         <div class="specific-options-bar--wrapper">
           <div v-if="opcao == 'adicionar-icone'" class="specific-options-bar--adicionar-icone">
-            <button>adicionar icone</button>
+            <select v-model="formatoSelecionado">
+              <option value="circulo">Círculo</option>
+              <option value="quadrado">Quadrado</option>
+            </select>
+
+            <input type="color" v-model="corSelecionada"> 
           </div>
 
           <div v-else-if="opcao == 'adicionar-texto'" class="specific-options-bar--adicionar-texto">
-            <button>adicionar texto</button>
+            <input type="text" v-model="textoPraAdicionar"> 
+            <input type="color" v-model="corSelecionada"> 
           </div>
 
           <div v-else-if="opcao == 'cortar-imagem'" class="specific-options-bar--cortar-imagem">
@@ -105,32 +111,13 @@ export default {
       retirado: [],
       proximo_clique: '',
       opcao: '',
+      formatoSelecionado: 'circulo',
+      corSelecionada: "#c40824",
+      textoPraAdicionar: 'texto',
+      transfomer: null,
     }
   },
   methods: {
-    novoShape(){
-      let stage = this.stage.getStage();
-      console.log(stage);
-      let layer = stage.getLayers();
-      layer = layer[0];
-      
-      let retangulo = new Konva.Rect({
-        x: 160,
-        y: 60,
-        width: 100,
-        height: 90,
-        fill: 'red',
-        name: 'rect',
-        stroke: 'black',
-        draggable: true,
-      });
-      layer.add(retangulo);
-
-      // var transformer = new Konva.Transformer();
-      // layer.add(transformer);
-      // transformer.nodes([retangulo]);
-      // stage.add(layer);
-    },
     salvarImagem(){
       let data_url = this.stage.toDataURL({ pixelRatio: 3 });
       let link = document.createElement('a');
@@ -139,33 +126,74 @@ export default {
       this.imagem = data_url;
       document.body.appendChild(link);
     },
-    addEventoClick(){
+    addEventoClick(string){
+      console.log(string);
       let stage = this.stage;
       let layer = this.layer;
+      let cor = this.corSelecionada;
+      let formatoSelecionado = this.formatoSelecionado;
+      let opcao = this.opcao;
 
       let posicaoMouse = stage.getPointerPosition();
-        console.log(posicaoMouse);
-        let nome_classe = `circulo-${this.numero_iteracoes++}`;
-        // let layer = new Konva.Layer();
-        let circle = new Konva.Circle({
+        //console.log(posicaoMouse);
+      let nome_classe = `icone-${this.numero_iteracoes++}`;
+      // let layer = new Konva.Layer();
+      let objeto;
+      
+      if(opcao == 'adicionar-icone'){
+        if(formatoSelecionado == 'circulo'){
+          objeto = new Konva.Circle({
+            x: posicaoMouse.x,
+            y: posicaoMouse.y,
+            radius: 10,
+            fill: cor,
+            stroke: 'black',
+            strokeWidth: 2,
+            class: nome_classe,
+            draggable: true,
+          });
+        }
+        else if(formatoSelecionado == 'quadrado'){
+          objeto = new Konva.Rect({
+            x: posicaoMouse.x,
+            y: posicaoMouse.y,
+            width: 10,
+            height: 10,
+            fill: cor,
+            stroke: 'black',
+            strokeWidth: 2,
+            class: nome_classe,
+            draggable: true,
+          });
+        }
+      }
+      else if(opcao == 'adicionar-texto'){
+        let textoPraAdicionar = this.textoPraAdicionar;
+        
+        objeto = new Konva.Text({
+          text: textoPraAdicionar,
           x: posicaoMouse.x,
           y: posicaoMouse.y,
-          radius: 10,
-          fill: 'red',
-          stroke: 'black',
-          strokeWidth: 4,
-          class: nome_classe
+          fontSize: 20,
+          fill: cor,
+          draggable: true,
         });
 
-        layer.add(circle);
-        stage.add(layer);
-        // this.stage.add(this.layer_novo);
-        this.iteracoes.push({ titulo: 'Adicionei novo circulo', classe: nome_classe })
+        this.textoPraAdicionar = '';
+      }      
+
+      layer.add(objeto);
+      stage.add(layer);
+      this.opcao = '';
+      // this.stage.add(this.layer_novo);
+      this.iteracoes.push({ titulo: 'Adicionei novo circulo', classe: nome_classe })
     },
     adicionarImagemNoLayer(imagem_objeto){
       let imagem = new Konva.Image({
         image: imagem_objeto,
-        id: 'imagem'
+        id: 'imagem',
+        width: 425,
+        scaleY: 0.5,
       })
       this.imagem = imagem;
 
@@ -175,7 +203,11 @@ export default {
       layer.add(imagem);
       this.layer = layer;
       this.stage.add(layer);
-      this.stage.on(evento, () => { this.addEventoClick(); })
+      //if(this.opcao != '')
+        this.stage.on(evento, () => { 
+          let string = this.opcao;  
+          this.addEventoClick(string) 
+        });
     },
     imagemInput(e){
       this.montarStage();
@@ -229,7 +261,7 @@ export default {
     }
   },
   mounted(){
-    console.log('Fui montado!')
+    // console.log('Fui montado!')
   }
 }
 </script>
