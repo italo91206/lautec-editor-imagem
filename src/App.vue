@@ -64,11 +64,87 @@
           </div>
 
           <div v-else-if="opcao == 'redimensionar-imagem'" class="specific-options-bar--cortar-imagem">
-            <button>redimensionar imagem</button>
+            <div class="form-group">
+              <label for="">Largura</label>
+              <input type="range" 
+                min="1" :max="largura_maxima" 
+                v-model="largura_imagem"
+                @input="handleImageResize('width', largura_imagem)"
+              >
+              <label for="">{{ largura_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <label for="">Altura</label>
+              <input type="range" 
+                min="1" :max="altura_maxima" 
+                v-model="altura_imagem"
+                @input="handleImageResize('height', altura_imagem)"
+              >
+              <label for="">{{ altura_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <label for="">Rotação</label>
+              <input type="range"
+                min="0" max="360" step="1"
+                v-model="rotacao_imagem"
+                @input="handleImageResize('rotation', rotacao_imagem)"
+              >
+              <label for="">{{ rotacao_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <label for="">Zoom</label>
+              <input type="range"
+                min="0.1" max="4" step="0.1"
+                v-model="scale_image"
+                @input="handleImageScale(scale_image)"
+              >
+              <label for="">{{ scale_image }}</label>
+            </div>
+
+            <div class="form-group">
+              <button @click="resetImageResize">Resetar</button>
+            </div>
           </div>
 
           <div v-else-if="opcao == 'ajuste-de-brilho'" class="specific-options-bar--ajuste-de-brilho">
-            <button>teste</button>
+            <div class="form-group">
+              <label for="">Brilho</label>
+              <input type="range" 
+                min="-1" max="1" step="0.01"
+                @input="handleImageFilter('brightness', brilho_imagem)" 
+                v-model="brilho_imagem"
+              >
+              <label for="">{{ brilho_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <label for="">Realce</label>
+              <input type="range"
+                min="-1" max="1" step="0.01"
+                @input="handleImageFilter('enhance', realce_imagem)"
+                v-model="realce_imagem"
+              />
+              <label for="">{{ realce_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <label for="">Contraste</label>
+              <input type="range"
+                min="-100" max="100" step="1"
+                @input="handleImageFilter('contrast', contraste_imagem)"
+                v-model="contraste_imagem"
+              >
+              <label for="">{{ contraste_imagem }}</label>
+            </div>
+
+            <div class="form-group">
+              <button @click="resetImageFilters">
+                Resetar
+              </button>
+            </div>
           </div>
         </div>
 
@@ -105,6 +181,7 @@ export default {
       stage: null,
       layer: null,
       imagem: null,
+      imagem_bkp: null,
       numero_iteracoes: 0,
       iteracao_atual: 0,
       iteracoes: [],
@@ -115,16 +192,26 @@ export default {
       corSelecionada: "#c40824",
       textoPraAdicionar: 'texto',
       transfomer: null,
+      largura_maxima: null,
+      largura_imagem: null,
+      altura_maxima: null,
+      altura_imagem: null,
+      rotacao_imagem: 0,
+      scale_image: 1,
+      brilho_imagem: 0,
+      realce_imagem: 0,
+      contraste_imagem: 0,
     }
   },
   methods: {
     salvarImagem(){
-      let data_url = this.stage.toDataURL({ pixelRatio: 3 });
+      let data_url = this.stage.toDataURL({ pixelRatio: 2 });
       let link = document.createElement('a');
       link.download = 'imagem.jpeg';
       link.href = data_url;
       this.imagem = data_url;
       document.body.appendChild(link);
+      link.click();
     },
     addEventoClick(string){
       console.log(string);
@@ -182,31 +269,151 @@ export default {
         this.textoPraAdicionar = '';
       }      
 
+      let evento = window.innerWidth < 768 ? 'tap': 'click';
+      objeto.on(evento, (objeto) => {
+        this.handleTransform(objeto)
+      });
+
       layer.add(objeto);
       stage.add(layer);
       this.opcao = '';
       // this.stage.add(this.layer_novo);
       this.iteracoes.push({ titulo: 'Adicionei novo circulo', classe: nome_classe })
     },
+    handleTransform(e){
+      let objeto = e.target
+      let transformer = this.transformer;
+
+      // console.log('--handleTransform');
+      // console.log(transformer);
+
+      transformer.nodes([objeto]);
+
+      objeto.on('transformstart', () => {
+        // console.log('--transform start');
+      })
+
+      objeto.on('dragmove', () => {
+        // console.log('--drag move');
+      })
+
+      objeto.on('transform', () => {
+        // console.log('--transform');
+      })
+
+      objeto.on('transformend', () => {
+        // console.log('--transform end');
+      })
+    },
+    handleResetHandler(){
+      console.log('--handleResetHandler');
+      console.log(this.transformer);
+    },
+    handleImageFilter(attr, value){      
+      this.imagem.cache();
+       
+      this.imagem.filters([
+        Konva.Filters.Brighten,
+        Konva.Filters.Contrast,
+        Konva.Filters.Enhance
+      ])
+
+      let parsed_value = parseFloat(value, 10);      
+      //console.log('--handleImageFilter: ' + parsed_value);
+      if(attr == 'brightness') this.imagem.brightness(parsed_value);
+      else if(attr == 'enhance') this.imagem.enhance(parsed_value);
+      else if(attr == 'contrast') this.imagem.contrast(parsed_value);
+    },
+    resetTransform(){
+      let transformer = this.transformer;
+      console.log('--resetTransform')
+      console.log(transformer);
+      transformer.nodes([]);
+    },
+    resetImageFilters(){
+      this.imagem.clearCache();
+      this.imagem = this.imagem_bkp;
+      this.contraste_imagem = 0;
+      this.realce_imagem = 0;
+      this.brilho_imagem = 0;
+    },
+    resetImageResize(){
+      // this.imagem.clearCache();
+      // let height = parseInt(this.imagem_bkp.getAttr('height'), 10);
+      // let width = parseInt(this.imagem_bkp.getAttr('width'), 10);
+    
+      this.altura_imagem = 500;
+      this.largura_imagem = 425;
+      this.rotacao_imagem = 0;
+      this.scale_image = 1;
+
+      this.imagem.setAttr('height', 500);
+      this.imagem.setAttr('width', 425);
+      this.imagem.rotation(0);
+      this.imagem.scale({ x: 1, y: 1 });
+      // this.imagem = this.imagem_bkp;
+    },
     adicionarImagemNoLayer(imagem_objeto){
+      let transformer = new Konva.Transformer();
       let imagem = new Konva.Image({
         image: imagem_objeto,
         id: 'imagem',
         width: 425,
-        scaleY: 0.5,
+        height: 500,
+        scaleY: 1,
+        scaleX: 1,
+        x: 213,
+        y: 250,
+        draggable: true,
+        offset: {
+          x: 213,
+          y: 250
+        }
       })
+
       this.imagem = imagem;
+      this.imagem_bkp = imagem;
 
       let evento = window.innerWidth < 768 ? 'tap': 'click';
 
       let layer = new Konva.Layer();
       layer.add(imagem);
-      this.layer = layer;
+      layer.add(transformer);
+      
       this.stage.add(layer);
+      this.layer = layer;
+      this.transformer = transformer;
       
       this.stage.on(evento, () => { 
         if(this.opcao != '')  
-          this.addEventoClick(this.opcao) 
+          this.addEventoClick(this.opcao);
+      });
+
+      this.imagem.on(evento, () => {
+        this.resetTransform();
+      })
+
+      let width = parseInt(this.imagem.getAttr('width'), 10);
+      this.largura_imagem = width;
+      this.largura_maxima = width * 2;
+
+      let height = parseInt(this.imagem.getAttr('height'), 10);
+      this.altura_imagem = height;
+      this.altura_maxima = height * 2;
+
+      console.log(this.imagem.getAttr('height'))
+    },
+    handleImageResize(attr, value){
+      let value_parsed = parseInt(value, 10);
+      //console.log(value_parsed);
+      this.imagem.setAttr(attr, value_parsed);
+    },
+    handleImageScale(value){
+      let parsed_value = parseFloat(value, 10);
+      this.scale_image = parsed_value;
+      this.imagem.scale({
+        x: parsed_value,
+        y: parsed_value
       });
     },
     imagemInput(e){
