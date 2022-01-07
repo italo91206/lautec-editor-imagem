@@ -13,6 +13,14 @@
         </button>
       </div>
 
+      <div id="editor-opcoes-top">
+        <button class="editor-opcoes-top--opcao"><i class="fas fa-search-minus"></i></button>
+        <button class="editor-opcoes-top--opcao"><i class="fas fa-search-plus"></i></button>
+        <div class="vertical-separator"></div>
+        <button class="editor-opcoes-top--opcao"><i class="fas fa-eraser"></i></button>
+        <button class="editor-opcoes-top--opcao"><i class="fas fa-trash"></i></button>
+      </div>
+
       <div class="form-group">
         <input id="abrir-galeria" 
           class="hidden"
