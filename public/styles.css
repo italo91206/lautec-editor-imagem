@@ -1,6 +1,108 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Saira-Regular";
+}
+
 .container{
     margin: 0 auto;
-    width: 100%;
+    /* width: 100%; */
     max-width: 425px;
     padding: 0 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: -webkit-fill-available;
+    border: unset;
+    background: #F4F4F4;
+    border-radius: 8px;
+    max-width: 395px;
+    height: 26px;
+    padding: 11px 16px;
+    margin-top: 4px;
+    color: #C7C7C7;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group--checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.form-group--checkbox input {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.button {
+    width: 100%;
+    max-width: 395px;
+    border-radius: 100px;
+    border: unset;
+    height: 56px;
+}
+
+.button--primary {
+    background: #059696;
+    color: #fff;
+    font-weight: bold;
+    font-family: "Saira-Regular";
+    font-size: 16px;
+}
+
+
+@font-face {
+    font-family: "Saira-Black";
+    src: url("/fonts/Saira-Black.ttf");
+}
+
+
+@font-face {
+    font-family: "Saira-Bold";
+    src: url("/fonts/Saira-Bold.ttf");
+}
+
+
+@font-face {
+    font-family: "Saira-ExtraBold";
+    src: url("/fonts/Saira-ExtraBold.ttf");
+}
+
+@font-face {
+    font-family: "Saira-ExtraLight";
+    src: url("/fonts/Saira-ExtraLight.ttf");
+}
+
+@font-face {
+    font-family: "Saira-Light";
+    src: url("/fonts/Saira-Light.ttf");
+}
+
+@font-face {
+    font-family: "Saira-Medium";
+    src: url("/fonts/Saira-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Saira-Regular";
+    src: url("/fonts/Saira-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Saira-SemiBold";
+    src: url("/fonts/Saira-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "Saira-Thin";
+    src: url("/fonts/Saira-Thin.ttf");
 }
