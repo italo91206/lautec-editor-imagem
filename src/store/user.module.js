@@ -1,5 +1,3 @@
-import jwt_decode from "jwt-decode";
-
 // const existent_user = localStorage.getItem('user');
 
 export const user = {
@@ -8,8 +6,7 @@ export const user = {
     user: {},
   },
   actions: {
-    setUser({commit}, token){
-      let user = jwt_decode(token);
+    setUser({commit}, user){
       return commit('setUser', user);
     },
     getUser({commit}){

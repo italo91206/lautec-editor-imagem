@@ -34,6 +34,7 @@
 
 <script>
 import service from "../services/user-service.js";
+import jwt_decode from 'jwt-decode';
 
 export default {
   name: "LoginPage",
@@ -51,17 +52,33 @@ export default {
       await service
         .login(email, senha)
         .then((response) => {
-          let token = response.data.token;
-          localStorage.setItem("user", token);
-          this.$store.dispatch("user/setUser", token);
-          this.$router.push("/");
-          this.$toast.success(
-            `Bem vindo de volta ${this.$store.state.user.user.user.email}`
-          );
+          if(response.data.success){
+            let token = response.data.user;
+            let decoded; 
+            // token = token.token;
+            
+            try{
+              decoded = jwt_decode(token.token);
+            }
+            catch(err){
+              console.log(err);
+            }
+
+            // console.log(decoded.user);
+            console.log(token);
+
+            localStorage.setItem("user", token.token);
+            this.$store.dispatch("user/setUser", decoded.user);
+            let nome = this.$store.state.user.user.nome;
+            this.$router.push("/");
+            this.$toast.success(`Bem vindo de volta ${nome}`);
+          }
+          else
+            this.$toast.error(response.message)
         })
         .catch((response) => {
           console.log(response);
-          this.$toast.error("Algo deu errado.");
+          this.$toast.error(response.message);
         });
     },
   },

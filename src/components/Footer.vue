@@ -6,7 +6,7 @@
         <p>Laudos</p>
       </button>
 
-      <button class="footer-button">
+      <button class="footer-button" @click="$router.push('/novo-laudo')">
         <i class="fas fa-file-medical"></i>
         <p>Criar laudo</p>
       </button>
