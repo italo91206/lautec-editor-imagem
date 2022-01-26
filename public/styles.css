@@ -102,6 +102,10 @@ body {
     width: 100%;
 }
 
+.button.loading {
+    opacity: 0.5;
+}
+
 @font-face {
     font-family: "Saira-Black";
     src: url("/fonts/Saira-Black.ttf");

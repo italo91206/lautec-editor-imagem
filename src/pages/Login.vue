@@ -26,7 +26,10 @@
       </div>
 
       <div class="form-group">
-        <button class="button button--primary" @click="login">Login</button>
+        <button class="button button--primary" @click="login" :class="{'loading': login_loading}">
+          <template v-if="!login_loading">Login</template>
+          <template v-else>Aguarde...</template>
+        </button>
       </div>
     </section>
   </main>
@@ -43,15 +46,18 @@ export default {
       email: "",
       senha: "",
       remember_me: "",
+      login_loading: false,
     };
   },
   methods: {
     async login() {
       let { email, senha } = this;
-
+      this.login_loading = true;
       await service
         .login(email, senha)
         .then((response) => {
+          this.login_loading = false;
+          
           if(response.data.success){
             let token = response.data.user;
             let decoded; 
