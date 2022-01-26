@@ -18,7 +18,7 @@
           <article class="laudo-card"
             v-for="laudo in laudos" 
             :key="laudo.id" 
-            @click="$router.push(`/editar-laudo/${laudo.laudoId}`)"  
+            @click="$router.push(`/editar-laudo/${laudo.laudo_id}`)"  
           >
             <span class="laudo-card--icon">
               <i class="fas fa-file"></i>
