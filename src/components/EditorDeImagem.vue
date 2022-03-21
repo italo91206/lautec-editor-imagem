@@ -94,15 +94,17 @@
           v-if="opcao == 'adicionar-icone'"
           class="specific-options-bar--adicionar-icone"
         >
-          <span class="icone-option"
-            :class="{'active': formatoSelecionado == 'circulo'}"
+          <span
+            class="icone-option"
+            :class="{ active: formatoSelecionado == 'circulo' }"
             @click="formatoSelecionado = 'circulo'"
           >
             <span class="fas fa-circle"></span>
           </span>
 
-          <span class="icone-option"
-            :class="{'active': formatoSelecionado == 'quadrado'}"
+          <span
+            class="icone-option"
+            :class="{ active: formatoSelecionado == 'quadrado' }"
             @click="formatoSelecionado = 'quadrado'"
           >
             <span class="fas fa-square"></span>
@@ -115,7 +117,7 @@
           v-else-if="opcao == 'adicionar-texto'"
           class="specific-options-bar--adicionar-texto"
         >
-          <input type="text" v-model="textoPraAdicionar" />
+          <input type="text" placeholder="Inserir texto" v-model="textoPraAdicionar" />
           <input type="color" v-model="corSelecionada" />
         </div>
 
@@ -180,9 +182,10 @@
             <label for="">{{ scale_image }}</label>
           </div>
 
+          <!-- 
           <div class="form-group">
             <button @click="resetImageResize">Resetar</button>
-          </div>
+          </div> -->
         </div>
 
         <div
@@ -238,7 +241,10 @@
         <button
           class="editor-opcoes-top--opcao"
           @click="opcao = 'adicionar-icone'"
-          :class="{ active: opcao == 'adicionar-icone' }"
+          :class="{ 
+            active: opcao == 'adicionar-icone',
+            disabled: imagem == null  
+          }"
         >
           <i class="fas fa-shapes"></i>
         </button>
@@ -246,7 +252,10 @@
         <button
           class="editor-opcoes-top--opcao"
           @click="opcao = 'adicionar-texto'"
-          :class="{ active: opcao == 'adicionar-texto' }"
+          :class="{ 
+            active: opcao == 'adicionar-texto',
+            disabled: imagem == null
+          }"
         >
           <i class="fas fa-font"></i>
         </button>
@@ -254,7 +263,10 @@
         <button
           class="editor-opcoes-top--opcao"
           @click="opcao = 'cortar-imagem'"
-          :class="{ active: opcao == 'cortar-imagem' }"
+          :class="{ 
+            active: opcao == 'cortar-imagem',
+            disabled: imagem == null  
+          }"
         >
           <i class="fas fa-crop-alt"></i>
         </button>
@@ -262,7 +274,10 @@
         <button
           class="editor-opcoes-top--opcao"
           @click="opcao = 'redimensionar-imagem'"
-          :class="{ active: opcao == 'redimensionar-imagem' }"
+          :class="{ 
+            active: opcao == 'redimensionar-imagem', 
+            disabled: imagem == null 
+          }"
         >
           <i class="fas fa-sliders-h"></i>
         </button>
@@ -270,12 +285,15 @@
         <button
           class="editor-opcoes-top--opcao"
           @click="opcao = 'ajuste-de-brilho'"
-          :class="{ active: opcao == 'ajuste-de-brilho' }"
+          :class="{ 
+            active: opcao == 'ajuste-de-brilho',
+            disabled: imagem == null
+          }"
         >
           <i class="fas fa-magic"></i>
         </button>
 
-        <button 
+        <button
           class="editor-opcoes-top--opcao"
           :class="{ disabled: imagem == null }"
           @click="salvarImagem"
@@ -308,7 +326,7 @@ export default {
       opcao: "",
       formatoSelecionado: "circulo",
       corSelecionada: "#c40824",
-      textoPraAdicionar: "texto",
+      textoPraAdicionar: "",
       transfomer: null,
       largura_maxima: null,
       largura_imagem: null,
@@ -326,12 +344,15 @@ export default {
     };
   },
   methods: {
-    async urltoFile(url, filename, mimeType){
-      mimeType = mimeType || (url.match(/^data:([^;]+);/)||'')[1];
-      return (fetch(url)
-        .then(function(res){return res.arrayBuffer();})
-        .then(function(buf){return new File([buf], filename, {type:mimeType});})
-      );
+    async urltoFile(url, filename, mimeType) {
+      mimeType = mimeType || (url.match(/^data:([^;]+);/) || "")[1];
+      return fetch(url)
+        .then(function (res) {
+          return res.arrayBuffer();
+        })
+        .then(function (buf) {
+          return new File([buf], filename, { type: mimeType });
+        });
     },
     async salvarImagem() {
       // let imagem_url = this.imagem_url;
@@ -345,7 +366,7 @@ export default {
       // this.imagem = data_url;
       // document.body.appendChild(link);
       // link.click();
-      this.$emit('terminou_edicao', file);
+      this.$emit("terminou_edicao", file);
     },
     addEventoClick(string) {
       console.log(string);
@@ -652,7 +673,24 @@ export default {
 } */
 
 .icone-option.active {
-    border-bottom: solid 3px #2bb7b5;
+  border-bottom: solid 3px #2bb7b5;
+}
+
+.image-load-options--row .fas,
+.image-load-options--row .far {
+  margin-right: 10px;
+}
+
+.specific-options-bar--adicionar-texto {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 10px 0;
+}
+
+.specific-options-bar--adicionar-texto input[type="text"] {
+  border: none;
+  border-bottom: solid 2px #343434;
 }
 
 .icone-option {
@@ -667,15 +705,43 @@ export default {
   justify-content: center;
 }
 
+.image-load-options--row .fas, .image-load-options--row .far {
+    margin-right: 10px;
+}
+
+.specific-options-bar--cortar-imagem .form-group {
+    margin-bottom: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.specific-options-bar--cortar-imagem .form-group label {
+    width: 10%;
+    display: block;
+    font-weight: 400;
+}
+
+.specific-options-bar--cortar-imagem .form-group input {
+    width: 33%;
+    padding: 0px 16px;
+}
+
+.specific-options-bar--cortar-imagem {
+    padding: 0px 50px;
+    background: #f3f3f3;
+}
+
 .icone-option .fas {
   color: #343434;
 }
 
 .specific-options-bar--adicionar-icone {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .col-9.konva-wrapper {
@@ -761,6 +827,7 @@ export default {
 .editor-opcoes-top--opcao.disabled {
   color: #1b62625e;
   cursor: none;
+  pointer-events: none;
 }
 
 .konvajs-content {
