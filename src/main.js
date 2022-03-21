@@ -5,6 +5,9 @@ import VueRouter from 'vue-router'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import jwt_decode from 'jwt-decode'
+import wb from "./registerServiceWorker";
+
+Vue.prototype.$workbox = wb;
 
 import routes from './routes.js'
 import store from './store';
