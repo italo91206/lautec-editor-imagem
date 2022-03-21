@@ -9,7 +9,7 @@
           <i class="fas fa-chevron-left"></i>
         </button>
 
-        <h2>Editar locais</h2>
+        <h2>Editar imagens</h2>
       </section>
     </header>
 
