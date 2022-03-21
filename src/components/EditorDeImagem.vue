@@ -27,6 +27,7 @@
         <button class="editor-opcoes-top--opcao" @click="undo">
           <i class="fas fa-undo-alt"></i>
         </button>
+
         <button class="editor-opcoes-top--opcao" @click="redo">
           <i class="fas fa-redo-alt"></i>
         </button>
@@ -93,10 +94,19 @@
           v-if="opcao == 'adicionar-icone'"
           class="specific-options-bar--adicionar-icone"
         >
-          <select v-model="formatoSelecionado">
-            <option value="circulo">Círculo</option>
-            <option value="quadrado">Quadrado</option>
-          </select>
+          <span class="icone-option"
+            :class="{'active': formatoSelecionado == 'circulo'}"
+            @click="formatoSelecionado = 'circulo'"
+          >
+            <span class="fas fa-circle"></span>
+          </span>
+
+          <span class="icone-option"
+            :class="{'active': formatoSelecionado == 'quadrado'}"
+            @click="formatoSelecionado = 'quadrado'"
+          >
+            <span class="fas fa-square"></span>
+          </span>
 
           <input type="color" v-model="corSelecionada" />
         </div>
@@ -264,14 +274,13 @@
         >
           <i class="fas fa-magic"></i>
         </button>
-      </div>
 
-      <div id="save-button">
-        <button @click="salvarImagem">
-          <p class="flex">
-            <i class="fas fa-save"></i>
-            Salvar imagem
-          </p>
+        <button 
+          class="editor-opcoes-top--opcao"
+          :class="{ disabled: imagem == null }"
+          @click="salvarImagem"
+        >
+          <i class="fas fa-save"></i>
         </button>
       </div>
     </div>
@@ -642,20 +651,36 @@ export default {
   color: #2c3e50;
 } */
 
-.row {
+.icone-option.active {
+    border-bottom: solid 3px #2bb7b5;
+}
+
+.icone-option {
+  width: 30px;
+  height: 30px;
+  /* border: solid 1px grey; */
+  display: block;
+  /* border-radius: 9px; */
+  margin: 10px 0;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+}
+
+.icone-option .fas {
+  color: #343434;
+}
+
+.specific-options-bar--adicionar-icone {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .col-9.konva-wrapper {
   width: 100%;
   height: 500px;
-}
-
-.hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 .col-9 {
@@ -699,6 +724,7 @@ export default {
 
 #save-button {
   margin-top: 20px;
+  text-align: center;
 }
 
 #save-button button {
@@ -758,6 +784,7 @@ export default {
 
 .image-load-options--row {
   color: #f3f3f3;
+  text-align: center;
 }
 
 .image-load-options--row button {
