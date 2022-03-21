@@ -17,7 +17,21 @@
 
       <div class="form-group">
         <label for="">Senha</label>
-        <input type="text" placeholder="Digite a senha" v-model="senha" />
+        <div class="relative">
+          <input
+            :type="input_type"
+            placeholder="Digite a senha"
+            v-model="senha"
+          />
+          <span
+            id="see-password"
+            :class="{
+              'fas fa-eye': see_password == false,
+              'fas fa-eye-slash': see_password == true,
+            }"
+            @click="see_password = !see_password"
+          ></span>
+        </div>
       </div>
 
       <div class="form-group form-group--checkbox">
@@ -26,7 +40,11 @@
       </div>
 
       <div class="form-group">
-        <button class="button button--primary" @click="login" :class="{'loading': login_loading}">
+        <button
+          class="button button--primary"
+          @click="login"
+          :class="{ loading: login_loading }"
+        >
           <template v-if="!login_loading">Login</template>
           <template v-else>Aguarde...</template>
         </button>
@@ -37,7 +55,7 @@
 
 <script>
 import service from "../services/user-service.js";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
 
 export default {
   name: "LoginPage",
@@ -47,6 +65,8 @@ export default {
       senha: "",
       remember_me: "",
       login_loading: false,
+      see_password: false,
+      input_type: "password",
     };
   },
   methods: {
@@ -57,16 +77,15 @@ export default {
         .login(email, senha)
         .then((response) => {
           this.login_loading = false;
-          
-          if(response.data.success){
+
+          if (response.data.success) {
             let token = response.data.user;
-            let decoded; 
+            let decoded;
             // token = token.token;
-            
-            try{
+
+            try {
               decoded = jwt_decode(token.token);
-            }
-            catch(err){
+            } catch (err) {
               console.log(err);
             }
 
@@ -78,9 +97,7 @@ export default {
             let nome = this.$store.state.user.user.nome;
             this.$router.push("/");
             this.$toast.success(`Bem vindo de volta ${nome}`);
-          }
-          else
-            this.$toast.error(response.message)
+          } else this.$toast.error(response.message);
         })
         .catch((response) => {
           console.log(response);
@@ -88,10 +105,21 @@ export default {
         });
     },
   },
+  watch: {
+    see_password() {
+      if (this.see_password) this.input_type = "text";
+      else this.input_type = "password";
+    },
+  },
 };
 </script>
 
 <style>
+#see-password {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
 #login--header {
   height: 122px;
   background: linear-gradient(95.8deg, #242865 0.38%, #059696 100%);

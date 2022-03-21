@@ -106,6 +106,10 @@ body {
     opacity: 0.5;
 }
 
+.relative {
+    position: relative;
+}
+
 @font-face {
     font-family: "Saira-Black";
     src: url("/fonts/Saira-Black.ttf");
