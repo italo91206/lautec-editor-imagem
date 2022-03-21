@@ -97,7 +97,12 @@ export default {
             let nome = this.$store.state.user.user.nome;
             this.$router.push("/");
             this.$toast.success(`Bem vindo de volta ${nome}`);
-          } else this.$toast.error(response.message);
+          } 
+          else {
+            console.log(response.data)
+            this.$toast.error(response.data.message);
+          }
+
         })
         .catch((response) => {
           console.log(response);
